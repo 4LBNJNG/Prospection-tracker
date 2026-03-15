@@ -49,18 +49,18 @@ export default function Journal() {
   const openEdit = e => {
     setEditing(e.id)
     setForm({
-      date:         e.date ? e.date.toString().slice(0, 10) : '',
-      heure:        e.heure || '',
-      entreprise:   e.entreprise || '',
-      nom_contact:  e.nom_contact || '',
-      poste:        e.poste || '',
-      numero:       e.numero || '',
-      statut:       e.statut || '',
-      rdv_pris:     e.rdv_pris || false,
-      date_rdv:     e.date_rdv ? e.date_rdv.toString().slice(0, 10) : '',
-      commentaire:  e.commentaire || '',
-      objection:    e.objection || '',
-      next_step:    e.next_step || '',
+      date:        e.date ? e.date.toString().slice(0, 10) : '',
+      heure:       e.heure || '',
+      entreprise:  e.entreprise || '',
+      nom_contact: e.nom_contact || '',
+      poste:       e.poste || '',
+      numero:      e.numero || '',
+      statut:      e.statut || '',
+      rdv_pris:    e.rdv_pris || false,
+      date_rdv:    e.date_rdv ? e.date_rdv.toString().slice(0, 10) : '',
+      commentaire: e.commentaire || '',
+      objection:   e.objection || '',
+      next_step:   e.next_step || '',
     })
     setShowModal(true)
   }
@@ -187,69 +187,89 @@ export default function Journal() {
         </div>
       </div>
 
-      {/* Modal édition */}
+      {/* Sidebar édition */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}
-          onClick={e => e.target === e.currentTarget && setShowModal(false)}>
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border-2)', borderRadius: 'var(--r-xl)', padding: '2rem', width: '90%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto', animation: 'fadeUp 0.2s ease' }}>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.4rem', color: 'var(--text)', marginBottom: '1.5rem' }}>
-              Modifier l'appel
-            </h2>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-              <Field label="Date" field="date" type="date" />
-              <Field label="Heure" field="heure" type="time" />
-              <Field label="Nom Contact" field="nom_contact" />
-              <Field label="Entreprise" field="entreprise" />
-              <Field label="Poste" field="poste" />
-              <Field label="Numéro" field="numero" />
+        <>
+          <div
+            onClick={() => setShowModal(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, backdropFilter: 'blur(3px)' }}
+          />
+          <div style={{
+            position: 'fixed', top: 0, right: 0, bottom: 0, width: 480,
+            background: 'var(--surface)', borderLeft: '1px solid var(--border-2)',
+            zIndex: 201, overflowY: 'auto', padding: '2rem',
+            animation: 'slideIn 0.25s ease',
+            boxShadow: '-20px 0 60px rgba(0,0,0,0.4)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.4rem', color: 'var(--text)' }}>
+                Modifier l'appel
+              </h2>
+              <button onClick={() => setShowModal(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-3)', cursor: 'pointer', fontSize: '1.2rem' }}>
+                ✕
+              </button>
             </div>
 
-            <div style={{ marginBottom: '1rem' }}>
-              <label className="label">Statut</label>
-              <select className="select" value={form.statut}
-                onChange={e => setForm({ ...form, statut: e.target.value })}>
-                <option value="">—</option>
-                {STATUTS.map(s => <option key={s}>{s}</option>)}
-              </select>
-            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Date" field="date" type="date" />
+                <Field label="Heure" field="heure" type="time" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Nom Contact" field="nom_contact" />
+                <Field label="Entreprise" field="entreprise" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Poste" field="poste" />
+                <Field label="Numéro" field="numero" />
+              </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div>
-                <label className="label">RDV décroché ?</label>
-                <select className="select" value={form.rdv_pris ? 'oui' : 'non'}
-                  onChange={e => setForm({ ...form, rdv_pris: e.target.value === 'oui' })}>
-                  <option value="non">Non</option>
-                  <option value="oui">Oui</option>
+                <label className="label">Statut</label>
+                <select className="select" value={form.statut}
+                  onChange={e => setForm({ ...form, statut: e.target.value })}>
+                  <option value="">—</option>
+                  {STATUTS.map(s => <option key={s}>{s}</option>)}
                 </select>
               </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="label">RDV décroché ?</label>
+                  <select className="select" value={form.rdv_pris ? 'oui' : 'non'}
+                    onChange={e => setForm({ ...form, rdv_pris: e.target.value === 'oui' })}>
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="label">Date du RDV</label>
+                  <input className="input" type="date" value={form.date_rdv || ''}
+                    disabled={!form.rdv_pris} style={{ opacity: form.rdv_pris ? 1 : 0.35 }}
+                    onChange={e => setForm({ ...form, date_rdv: e.target.value })} />
+                </div>
+              </div>
+
+              <SelectField label="Objection" field="objection" options={OBJECTIONS} />
+              <SelectField label="Next Step" field="next_step" options={NEXT_STEPS} />
+
               <div>
-                <label className="label">Date du RDV</label>
-                <input className="input" type="date" value={form.date_rdv || ''}
-                  disabled={!form.rdv_pris} style={{ opacity: form.rdv_pris ? 1 : 0.35 }}
-                  onChange={e => setForm({ ...form, date_rdv: e.target.value })} />
+                <label className="label">Commentaire</label>
+                <textarea className="input" style={{ height: 100, resize: 'vertical' }}
+                  value={form.commentaire || ''}
+                  onChange={e => setForm({ ...form, commentaire: e.target.value })} />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-              <SelectField label="Objection" field="objection" options={OBJECTIONS} />
-              <SelectField label="Next Step" field="next_step" options={NEXT_STEPS} />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label className="label">Commentaire</label>
-              <textarea className="input" style={{ height: 90, resize: 'vertical' }}
-                value={form.commentaire || ''} onChange={e => setForm({ ...form, commentaire: e.target.value })} />
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-              <button className="btn-ghost" onClick={() => setShowModal(false)}>Annuler</button>
-              <button className="btn-teal" style={{ animation: 'none' }} onClick={handleSave} disabled={saving}>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem' }}>
+              <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Annuler</button>
+              <button className="btn-teal" style={{ flex: 2, animation: 'none' }} onClick={handleSave} disabled={saving}>
                 {saving ? 'Enregistrement...' : '💾 Sauvegarder'}
               </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
