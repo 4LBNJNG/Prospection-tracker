@@ -77,14 +77,17 @@ export default function SaisieRapide() {
 
         {/* COLONNE GAUCHE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div className="card">
+
+          {/* Card Prospect — overflow visible pour que le dropdown sorte */}
+          <div className="card" style={{ overflow: 'visible' }}>
             <div className="section-title-line"><span>Prospect</span></div>
             <div style={{ position: 'relative' }}>
               <label className="label">Rechercher</label>
               <input className="input" style={{ borderColor: selected ? 'var(--teal)' : undefined }}
                 value={search} placeholder="Nom ou entreprise..."
                 onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelected(null) }}
-                onFocus={() => setShowDropdown(true)} />
+                onFocus={() => setShowDropdown(true)}
+                onBlur={() => setTimeout(() => setShowDropdown(false), 150)} />
               {showDropdown && filtered.length > 0 && (
                 <div className="dropdown">
                   {filtered.map(p => (
@@ -124,6 +127,7 @@ export default function SaisieRapide() {
             )}
           </div>
 
+          {/* RDV */}
           <div className="card">
             <div className="section-title-line"><span>RDV</span></div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
@@ -146,6 +150,8 @@ export default function SaisieRapide() {
 
         {/* COLONNE DROITE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+          {/* Appel */}
           <div className="card">
             <div className="section-title-line"><span>Appel</span></div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
@@ -161,7 +167,7 @@ export default function SaisieRapide() {
             <div>
               <label className="label" style={{ color: form.statut ? 'var(--teal)' : 'var(--rose)' }}>Statut ★</label>
               <select className="select"
-                style={{ borderColor: form.statut ? 'var(--teal)' : 'rgba(251,113,133,0.4)', color: form.statut ? 'var(--text)' : 'var(--text-3)' }}
+                style={{ borderColor: form.statut ? 'var(--teal)' : 'rgba(224,108,117,0.4)', color: form.statut ? 'var(--text)' : 'var(--text-3)' }}
                 value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
                 <option value="">— Choisir —</option>
                 {STATUTS.map(s => <option key={s}>{s}</option>)}
@@ -169,6 +175,7 @@ export default function SaisieRapide() {
             </div>
           </div>
 
+          {/* Détails */}
           <div className="card" style={{ flex: 1 }}>
             <div className="section-title-line"><span>Détails</span></div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
