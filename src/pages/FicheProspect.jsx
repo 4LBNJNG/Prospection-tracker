@@ -50,12 +50,14 @@ export default function FicheProspect() {
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: '1rem' }}>
+      {/* Card avec overflow visible pour que le dropdown sorte */}
+      <div className="card" style={{ marginBottom: '1rem', overflow: 'visible' }}>
         <div className="section-title-line"><span>Sélectionner un prospect</span></div>
         <div style={{ position: 'relative' }}>
           <input className="input" value={search} placeholder="Rechercher par nom ou entreprise..."
             onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelected(null) }}
-            onFocus={() => setShowDropdown(true)} />
+            onFocus={() => setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 150)} />
           {showDropdown && filtered.length > 0 && (
             <div className="dropdown">
               {filtered.map(p => (
