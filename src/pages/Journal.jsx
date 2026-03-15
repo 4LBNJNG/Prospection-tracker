@@ -101,7 +101,7 @@ export default function Journal() {
   )
 
   return (
-    <div className="page">
+    <div style={{ padding: '2.5rem 2rem', maxWidth: '100%', animation: 'fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
       <div className="page-header">
         <div>
           <h1 className="display">Journal <em>des appels</em></h1>
@@ -150,7 +150,7 @@ export default function Journal() {
                       ? <span className="badge badge-teal">✓ {e.date_rdv ? new Date(e.date_rdv).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : 'Oui'}</span>
                       : <span style={{ color: 'var(--text-3)' }}>—</span>}
                   </td>
-                  <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-3)' }}>
+                  <td style={{ maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-3)' }}>
                     {e.commentaire || '—'}
                   </td>
                   <td style={{ color: 'var(--teal)', fontWeight: 500, fontSize: '0.82rem' }}>{e.next_step || '—'}</td>
@@ -187,7 +187,7 @@ export default function Journal() {
         </div>
       </div>
 
-      {/* Sidebar édition — pleine largeur droite */}
+      {/* Sidebar édition */}
       {showModal && (
         <>
           <div
@@ -195,90 +195,83 @@ export default function Journal() {
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, backdropFilter: 'blur(3px)' }}
           />
           <div style={{
-            position: 'fixed', top: 0, right: 0, bottom: 0, left: 232,
+            position: 'fixed', top: 0, right: 0, bottom: 0,
+            width: 560,
             background: 'var(--bg-3)',
             borderLeft: '1px solid var(--border-2)',
             zIndex: 201, overflowY: 'auto',
-            padding: '3rem 4rem',
+            padding: '2.5rem',
             animation: 'slideIn 0.25s ease',
             boxShadow: '-20px 0 60px rgba(0,0,0,0.5)'
           }}>
-            <div style={{ maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--border)' }}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.6rem', color: 'var(--text)' }}>
+                Modifier <em style={{ fontStyle: 'italic', color: 'var(--teal)' }}>l'appel</em>
+              </h2>
+              <button onClick={() => setShowModal(false)}
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer', fontSize: '1rem', width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--rose)'; e.currentTarget.style.color = 'var(--rose)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-2)' }}>
+                ✕
+              </button>
+            </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border)' }}>
-                <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.8rem', color: 'var(--text)' }}>
-                  Modifier <em style={{ fontStyle: 'italic', color: 'var(--teal)' }}>l'appel</em>
-                </h2>
-                <button onClick={() => setShowModal(false)}
-                  style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer', fontSize: '1rem', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--rose)'; e.currentTarget.style.color = 'var(--rose)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-2)' }}>
-                  ✕
-                </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Date" field="date" type="date" />
+                <Field label="Heure" field="heure" type="time" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Nom Contact" field="nom_contact" />
+                <Field label="Entreprise" field="entreprise" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Poste" field="poste" />
+                <Field label="Numéro" field="numero" />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                  <Field label="Date" field="date" type="date" />
-                  <Field label="Heure" field="heure" type="time" />
-                </div>
+              <div>
+                <label className="label">Statut</label>
+                <select className="select" value={form.statut}
+                  onChange={e => setForm({ ...form, statut: e.target.value })}>
+                  <option value="">—</option>
+                  {STATUTS.map(s => <option key={s}>{s}</option>)}
+                </select>
+              </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                  <Field label="Nom Contact" field="nom_contact" />
-                  <Field label="Entreprise" field="entreprise" />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                  <Field label="Poste" field="poste" />
-                  <Field label="Numéro" field="numero" />
-                </div>
-
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label className="label">Statut</label>
-                  <select className="select" value={form.statut}
-                    onChange={e => setForm({ ...form, statut: e.target.value })}>
-                    <option value="">—</option>
-                    {STATUTS.map(s => <option key={s}>{s}</option>)}
+                  <label className="label">RDV décroché ?</label>
+                  <select className="select" value={form.rdv_pris ? 'oui' : 'non'}
+                    onChange={e => setForm({ ...form, rdv_pris: e.target.value === 'oui' })}>
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
                   </select>
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                  <div>
-                    <label className="label">RDV décroché ?</label>
-                    <select className="select" value={form.rdv_pris ? 'oui' : 'non'}
-                      onChange={e => setForm({ ...form, rdv_pris: e.target.value === 'oui' })}>
-                      <option value="non">Non</option>
-                      <option value="oui">Oui</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="label">Date du RDV</label>
-                    <input className="input" type="date" value={form.date_rdv || ''}
-                      disabled={!form.rdv_pris} style={{ opacity: form.rdv_pris ? 1 : 0.35 }}
-                      onChange={e => setForm({ ...form, date_rdv: e.target.value })} />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                  <SelectField label="Objection" field="objection" options={OBJECTIONS} />
-                  <SelectField label="Next Step" field="next_step" options={NEXT_STEPS} />
-                </div>
-
                 <div>
-                  <label className="label">Commentaire</label>
-                  <textarea className="input" style={{ height: 120, resize: 'vertical' }}
-                    value={form.commentaire || ''}
-                    onChange={e => setForm({ ...form, commentaire: e.target.value })} />
+                  <label className="label">Date du RDV</label>
+                  <input className="input" type="date" value={form.date_rdv || ''}
+                    disabled={!form.rdv_pris} style={{ opacity: form.rdv_pris ? 1 : 0.35 }}
+                    onChange={e => setForm({ ...form, date_rdv: e.target.value })} />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
-                <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Annuler</button>
-                <button className="btn-teal" style={{ flex: 2, animation: 'none' }} onClick={handleSave} disabled={saving}>
-                  {saving ? 'Enregistrement...' : '💾 Sauvegarder'}
-                </button>
-              </div>
+              <SelectField label="Objection" field="objection" options={OBJECTIONS} />
+              <SelectField label="Next Step" field="next_step" options={NEXT_STEPS} />
 
+              <div>
+                <label className="label">Commentaire</label>
+                <textarea className="input" style={{ height: 110, resize: 'vertical' }}
+                  value={form.commentaire || ''}
+                  onChange={e => setForm({ ...form, commentaire: e.target.value })} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
+              <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Annuler</button>
+              <button className="btn-teal" style={{ flex: 2, animation: 'none' }} onClick={handleSave} disabled={saving}>
+                {saving ? 'Enregistrement...' : '💾 Sauvegarder'}
+              </button>
             </div>
           </div>
         </>
