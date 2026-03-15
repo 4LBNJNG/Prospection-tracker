@@ -42,8 +42,6 @@ export default function SaisieRapide() {
     if (!selected) return alert('Sélectionne un prospect')
     if (!form.statut) return alert('Renseigne le statut')
     setSaving(true)
-
-    // 1 — Enregistrer dans le journal
     const { error } = await supabase.from('journal').insert([{
       date: form.date, heure: form.heure,
       entreprise: selected.entreprise, nom_contact: selected.nom,
@@ -52,8 +50,6 @@ export default function SaisieRapide() {
       date_rdv: form.rdv_pris && form.date_rdv ? form.date_rdv : null,
       commentaire: form.commentaire, objection: form.objection, next_step: form.next_step
     }])
-
-    // 2 — Si next step = "Envoyer un mail", créer une ligne dans mails
     if (!error && form.next_step === 'Envoyer un mail') {
       await supabase.from('mails').insert([{
         date_envoi: form.date,
@@ -66,21 +62,17 @@ export default function SaisieRapide() {
       }])
       setMailCreated(true)
     }
-
     setSaving(false)
-
     if (!error) {
       setSuccess(true)
       setSelected(null); setSearch('')
       setForm({ date: today(), heure: nowTime(), statut: '', rdv_pris: false, date_rdv: '', commentaire: '', objection: '', next_step: '' })
       setTimeout(() => { setSuccess(false); setMailCreated(false) }, 4000)
-    } else {
-      alert('Erreur : ' + error.message)
-    }
+    } else alert('Erreur : ' + error.message)
   }
 
   return (
-    <div className="page" style={{ maxWidth: 860 }}>
+    <div style={{ padding: '2.5rem 2rem', maxWidth: '100%', animation: 'fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
       <div className="page-header">
         <div>
           <h1 className="display">Saisie <em>Rapide</em></h1>
@@ -95,15 +87,11 @@ export default function SaisieRapide() {
       {success && (
         <div className="alert-success" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.3rem' }}>
           <div>✅ Appel enregistré avec succès !</div>
-          {mailCreated && (
-            <div style={{ fontSize: '0.82rem', color: 'var(--teal)', fontWeight: 500 }}>
-              ✉️ Une ligne a été créée dans <strong>Suivi Mails</strong> avec le statut "Non envoyé"
-            </div>
-          )}
+          {mailCreated && <div style={{ fontSize: '0.82rem', color: 'var(--teal)', fontWeight: 500 }}>✉️ Une ligne a été créée dans <strong>Suivi Mails</strong> avec le statut "Non envoyé"</div>}
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
 
         {/* COLONNE GAUCHE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -130,7 +118,7 @@ export default function SaisieRapide() {
             </div>
 
             {selected && (
-              <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem' }}>
+              <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.4rem' }}>
                 <div className="info-item"><span style={{ opacity: 0.5 }}>🏢</span><strong style={{ color: 'var(--text)' }}>{selected.entreprise || '—'}</strong></div>
                 <div className="info-item"><span style={{ opacity: 0.5 }}>💼</span>{selected.poste || '—'}</div>
                 <div className="info-item" style={{ gridColumn: '1/-1' }}>
@@ -156,10 +144,9 @@ export default function SaisieRapide() {
             )}
           </div>
 
-          {/* RDV */}
           <div className="card">
             <div className="section-title-line"><span>RDV</span></div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem' }}>
               <div>
                 <label className="label">RDV décroché ?</label>
                 <select className="select" value={form.rdv_pris ? 'oui' : 'non'} onChange={e => setForm({ ...form, rdv_pris: e.target.value === 'oui' })}>
@@ -180,10 +167,9 @@ export default function SaisieRapide() {
         {/* COLONNE DROITE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
-          {/* Appel */}
           <div className="card">
             <div className="section-title-line"><span>Appel</span></div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div>
                 <label className="label">Date</label>
                 <input type="date" className="input" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
@@ -204,7 +190,6 @@ export default function SaisieRapide() {
             </div>
           </div>
 
-          {/* Détails */}
           <div className="card" style={{ flex: 1 }}>
             <div className="section-title-line"><span>Détails</span></div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -225,7 +210,6 @@ export default function SaisieRapide() {
                 </select>
               </div>
 
-              {/* Indication visuelle si "Envoyer un mail" sélectionné */}
               {form.next_step === 'Envoyer un mail' && (
                 <div style={{ background: 'var(--violet-dim)', border: '1px solid rgba(157,133,232,0.25)', borderRadius: 'var(--r-md)', padding: '0.7rem 0.9rem', fontSize: '0.82rem', color: 'var(--violet)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   ✉️ Une ligne sera créée automatiquement dans <strong>Suivi Mails</strong>

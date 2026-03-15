@@ -42,7 +42,7 @@ export default function FicheProspect() {
   }
 
   return (
-    <div className="page" style={{ maxWidth: 1000 }}>
+    <div style={{ padding: '2.5rem 2rem', maxWidth: '100%', animation: 'fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
       <div className="page-header">
         <div>
           <h1 className="display">Fiche <em>Prospect</em></h1>
@@ -50,10 +50,10 @@ export default function FicheProspect() {
         </div>
       </div>
 
-      {/* Card avec overflow visible pour que le dropdown sorte */}
+      {/* Sélecteur */}
       <div className="card" style={{ marginBottom: '1rem', overflow: 'visible' }}>
         <div className="section-title-line"><span>Sélectionner un prospect</span></div>
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', maxWidth: 500 }}>
           <input className="input" value={search} placeholder="Rechercher par nom ou entreprise..."
             onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelected(null) }}
             onFocus={() => setShowDropdown(true)}
@@ -74,9 +74,10 @@ export default function FicheProspect() {
       {loading && <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-3)' }}>Chargement...</div>}
 
       {selected && !loading && <>
+        {/* Identité */}
         <div className="card" style={{ marginBottom: '1rem' }}>
           <div className="section-title-line"><span>Identité</span></div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.5rem' }}>
             <div className="info-item"><span style={{ opacity: 0.4 }}>🏢</span><strong style={{ color: 'var(--text)' }}>{selected.entreprise || '—'}</strong></div>
             <div className="info-item"><span style={{ opacity: 0.4 }}>💼</span>{selected.poste || '—'}</div>
             <div className="info-item"><span style={{ opacity: 0.4 }}>📞</span>{selected.telephone || '—'}</div>
@@ -86,7 +87,8 @@ export default function FicheProspect() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+        {/* KPIs */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
           <div className="kpi-card">
             <div className="kpi-label">Appels passés</div>
             <div className="kpi-value">{total}</div>
@@ -102,6 +104,7 @@ export default function FicheProspect() {
           </div>
         </div>
 
+        {/* Historique */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
             <div className="section-title-line" style={{ marginBottom: 0 }}>
@@ -111,25 +114,27 @@ export default function FicheProspect() {
           {journal.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-3)' }}>Aucun appel enregistré</div>
           ) : (
-            <table className="data-table">
-              <thead>
-                <tr>
-                  {['Date', 'Statut', 'RDV', 'Commentaire', 'Objection', 'Next Step'].map(h => <th key={h}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {journal.map(j => (
-                  <tr key={j.id}>
-                    <td style={{ whiteSpace: 'nowrap', color: 'var(--text-3)', fontSize: '0.8rem' }}>{formatDate(j.date)}</td>
-                    <td><span className={statutClass(j.statut)}>{j.statut}</span></td>
-                    <td>{j.rdv_pris ? <span className="badge badge-teal">✓ {j.date_rdv ? formatDate(j.date_rdv) : 'Oui'}</span> : <span style={{ color: 'var(--text-3)' }}>—</span>}</td>
-                    <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-3)', fontStyle: 'italic' }}>{j.commentaire || '—'}</td>
-                    <td style={{ color: 'var(--text-2)' }}>{j.objection || '—'}</td>
-                    <td style={{ color: 'var(--teal)', fontWeight: 500 }}>{j.next_step || '—'}</td>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    {['Date', 'Statut', 'RDV', 'Commentaire', 'Objection', 'Next Step'].map(h => <th key={h}>{h}</th>)}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {journal.map(j => (
+                    <tr key={j.id}>
+                      <td style={{ whiteSpace: 'nowrap', color: 'var(--text-3)', fontSize: '0.8rem' }}>{formatDate(j.date)}</td>
+                      <td><span className={statutClass(j.statut)}>{j.statut}</span></td>
+                      <td>{j.rdv_pris ? <span className="badge badge-teal">✓ {j.date_rdv ? formatDate(j.date_rdv) : 'Oui'}</span> : <span style={{ color: 'var(--text-3)' }}>—</span>}</td>
+                      <td style={{ maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-3)', fontStyle: 'italic' }}>{j.commentaire || '—'}</td>
+                      <td style={{ color: 'var(--text-2)' }}>{j.objection || '—'}</td>
+                      <td style={{ color: 'var(--teal)', fontWeight: 500 }}>{j.next_step || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </>}
