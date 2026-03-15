@@ -18,6 +18,7 @@ export default function SaisieRapide() {
   const [form, setForm] = useState({ date: today(), heure: nowTime(), statut: '', rdv_pris: false, date_rdv: '', commentaire: '', objection: '', next_step: '' })
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [mailCreated, setMailCreated] = useState(false)
 
   useEffect(() => {
     supabase.from('prospects').select('*').order('nom').then(({ data }) => setProspects(data || []))
@@ -41,6 +42,8 @@ export default function SaisieRapide() {
     if (!selected) return alert('Sélectionne un prospect')
     if (!form.statut) return alert('Renseigne le statut')
     setSaving(true)
+
+    // 1 — Enregistrer dans le journal
     const { error } = await supabase.from('journal').insert([{
       date: form.date, heure: form.heure,
       entreprise: selected.entreprise, nom_contact: selected.nom,
@@ -49,13 +52,31 @@ export default function SaisieRapide() {
       date_rdv: form.rdv_pris && form.date_rdv ? form.date_rdv : null,
       commentaire: form.commentaire, objection: form.objection, next_step: form.next_step
     }])
+
+    // 2 — Si next step = "Envoyer un mail", créer une ligne dans mails
+    if (!error && form.next_step === 'Envoyer un mail') {
+      await supabase.from('mails').insert([{
+        date_envoi: form.date,
+        prospect_nom: selected.nom,
+        entreprise: selected.entreprise,
+        type_mail: 'Prospection',
+        profils_envoyes: '',
+        statut: 'Non envoyé',
+        commentaire: form.commentaire || ''
+      }])
+      setMailCreated(true)
+    }
+
     setSaving(false)
+
     if (!error) {
       setSuccess(true)
       setSelected(null); setSearch('')
       setForm({ date: today(), heure: nowTime(), statut: '', rdv_pris: false, date_rdv: '', commentaire: '', objection: '', next_step: '' })
-      setTimeout(() => setSuccess(false), 3000)
-    } else alert('Erreur : ' + error.message)
+      setTimeout(() => { setSuccess(false); setMailCreated(false) }, 4000)
+    } else {
+      alert('Erreur : ' + error.message)
+    }
   }
 
   return (
@@ -71,14 +92,22 @@ export default function SaisieRapide() {
         </div>
       </div>
 
-      {success && <div className="alert-success">✅ Appel enregistré avec succès !</div>}
+      {success && (
+        <div className="alert-success" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.3rem' }}>
+          <div>✅ Appel enregistré avec succès !</div>
+          {mailCreated && (
+            <div style={{ fontSize: '0.82rem', color: 'var(--teal)', fontWeight: 500 }}>
+              ✉️ Une ligne a été créée dans <strong>Suivi Mails</strong> avec le statut "Non envoyé"
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
 
         {/* COLONNE GAUCHE */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
-          {/* Card Prospect — overflow visible pour que le dropdown sorte */}
           <div className="card" style={{ overflow: 'visible' }}>
             <div className="section-title-line"><span>Prospect</span></div>
             <div style={{ position: 'relative' }}>
@@ -188,11 +217,21 @@ export default function SaisieRapide() {
               </div>
               <div>
                 <label className="label">Next Step</label>
-                <select className="select" value={form.next_step} onChange={e => setForm({ ...form, next_step: e.target.value })}>
+                <select className="select"
+                  style={{ borderColor: form.next_step === 'Envoyer un mail' ? 'var(--violet)' : undefined, color: form.next_step === 'Envoyer un mail' ? 'var(--violet)' : undefined }}
+                  value={form.next_step} onChange={e => setForm({ ...form, next_step: e.target.value })}>
                   <option value="">—</option>
                   {NEXT_STEPS.map(n => <option key={n}>{n}</option>)}
                 </select>
               </div>
+
+              {/* Indication visuelle si "Envoyer un mail" sélectionné */}
+              {form.next_step === 'Envoyer un mail' && (
+                <div style={{ background: 'var(--violet-dim)', border: '1px solid rgba(157,133,232,0.25)', borderRadius: 'var(--r-md)', padding: '0.7rem 0.9rem', fontSize: '0.82rem', color: 'var(--violet)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  ✉️ Une ligne sera créée automatiquement dans <strong>Suivi Mails</strong>
+                </div>
+              )}
+
               <div>
                 <label className="label">Commentaire</label>
                 <textarea className="input" style={{ height: 80, resize: 'vertical' }}

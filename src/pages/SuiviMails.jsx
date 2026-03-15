@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 const TYPES = ['Prospection', 'Proposition de profil(s)', 'Relance', 'Suivi RDV', 'Autre']
-const STATUTS = ['Envoyé', 'Répondu', 'Sans réponse', 'Relancé', 'Clôturé']
+const STATUTS = ['Non envoyé', 'Envoyé', 'Répondu', 'Sans réponse', 'Relancé', 'Clôturé']
 
 const statutClass = s => {
   if (s === 'Répondu') return 'badge badge-green'
   if (s === 'Envoyé') return 'badge badge-teal'
   if (s === 'Relancé') return 'badge badge-yellow'
   if (s === 'Sans réponse') return 'badge badge-red'
+  if (s === 'Non envoyé') return 'badge badge-slate'
   return 'badge badge-slate'
 }
 
