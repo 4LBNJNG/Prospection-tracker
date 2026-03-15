@@ -8,6 +8,7 @@ import AnalyseHoraire from './pages/AnalyseHoraire'
 import AnalyseEntreprise from './pages/AnalyseEntreprise'
 import KpiSemaine from './pages/KpiSemaine'
 import Objectifs from './pages/Objectifs'
+import SuiviMails from './pages/SuiviMails'
 
 const NAV_GROUPS = [
   {
@@ -16,6 +17,7 @@ const NAV_GROUPS = [
       { to: '/',          icon: '⚡', label: 'Saisie Rapide' },
       { to: '/journal',   icon: '📋', label: 'Journal' },
       { to: '/prospects', icon: '👥', label: 'Prospects' },
+      { to: '/mails', icon: '✉️', label: 'Suivi Mails' },
     ]
   },
   {
@@ -113,6 +115,7 @@ export default function App() {
             <Route path="/entreprise" element={<AnalyseEntreprise />} />
             <Route path="/semaine" element={<KpiSemaine />} />
             <Route path="/objectifs" element={<Objectifs />} />
+            <Route path="/mails" element={<SuiviMails />} />
           </Routes>
         </main>
       </div>
