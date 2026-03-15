@@ -188,45 +188,72 @@ export default function Prospects() {
         )}
       </div>
 
-      {/* Modal */}
+      {/* Sidebar ajout/modification */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}
-          onClick={e => e.target === e.currentTarget && setShowModal(false)}>
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border-2)', borderRadius: 'var(--r-xl)', padding: '2rem', width: '90%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto', animation: 'fadeUp 0.2s ease' }}>
-            <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.4rem', color: 'var(--text)', marginBottom: '1.5rem' }}>
-              {editing ? 'Modifier le prospect' : 'Nouveau prospect'}
-            </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-              <Field label="Nom *" field="nom" />
-              <Field label="Entreprise" field="entreprise" />
+        <>
+          <div
+            onClick={() => setShowModal(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, backdropFilter: 'blur(3px)' }}
+          />
+          <div style={{
+            position: 'fixed', top: 0, right: 0, bottom: 0, width: 560,
+            background: 'var(--bg-3)', borderLeft: '1px solid var(--border-2)',
+            zIndex: 201, overflowY: 'auto', padding: '2.5rem',
+            animation: 'slideIn 0.25s ease', boxShadow: '-20px 0 60px rgba(0,0,0,0.5)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--border)' }}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.6rem', color: 'var(--text)' }}>
+                {editing ? 'Modifier' : 'Nouveau'} <em style={{ fontStyle: 'italic', color: 'var(--teal)' }}>prospect</em>
+              </h2>
+              <button onClick={() => setShowModal(false)}
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer', width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--rose)'; e.currentTarget.style.color = 'var(--rose)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-2)' }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Nom *" field="nom" />
+                <Field label="Entreprise" field="entreprise" />
+              </div>
               <Field label="Poste" field="poste" />
-              <Field label="Téléphone" field="telephone" />
-              <Field label="Mobile" field="mobile" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Téléphone" field="telephone" />
+                <Field label="Mobile" field="mobile" />
+              </div>
               <Field label="Email" field="email" type="email" />
-              <Field label="Ville" field="ville" />
-              <Field label="Département" field="departement" />
-              <Field label="Techno" field="techno" />
-              <Field label="Potentiel" field="potentiel" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Ville" field="ville" />
+                <Field label="Département" field="departement" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Field label="Techno" field="techno" />
+                <Field label="Potentiel" field="potentiel" />
+              </div>
+              <div>
+                <label className="label">Commentaire</label>
+                <textarea className="input" style={{ height: 90, resize: 'vertical' }}
+                  value={form.commentaire || ''}
+                  onChange={e => setForm({ ...form, commentaire: e.target.value })} />
+              </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: 'var(--text-2)' }}>
+                <input type="checkbox" checked={form.a_rappeler}
+                  onChange={e => setForm({ ...form, a_rappeler: e.target.checked })}
+                  style={{ accentColor: 'var(--teal)', width: 15, height: 15 }} />
+                ⭐ À rappeler en priorité
+              </label>
             </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label className="label">Commentaire</label>
-              <textarea className="input" style={{ height: 80, resize: 'vertical' }}
-                value={form.commentaire || ''} onChange={e => setForm({ ...form, commentaire: e.target.value })} />
-            </div>
-            <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <input type="checkbox" id="rappeler" checked={form.a_rappeler}
-                onChange={e => setForm({ ...form, a_rappeler: e.target.checked })}
-                style={{ accentColor: 'var(--teal)', width: 15, height: 15 }} />
-              <label htmlFor="rappeler" style={{ fontSize: '0.875rem', color: 'var(--text-2)', cursor: 'pointer' }}>⭐ À rappeler en priorité</label>
-            </div>
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-              <button className="btn-ghost" onClick={() => setShowModal(false)}>Annuler</button>
-              <button className="btn-teal" style={{ animation: 'none' }} onClick={handleSave} disabled={saving}>
-                {saving ? 'Enregistrement...' : 'Enregistrer'}
+
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
+              <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Annuler</button>
+              <button className="btn-teal" style={{ flex: 2, animation: 'none' }} onClick={handleSave} disabled={saving}>
+                {saving ? 'Enregistrement...' : '💾 Enregistrer'}
               </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
