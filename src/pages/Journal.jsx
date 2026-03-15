@@ -12,7 +12,11 @@ const statutClass = s => {
   return 'badge badge-slate'
 }
 
-const EMPTY = { date: '', heure: '', entreprise: '', nom_contact: '', poste: '', numero: '', statut: '', rdv_pris: false, date_rdv: '', commentaire: '', objection: '', next_step: '' }
+const EMPTY = {
+  date: '', heure: '', entreprise: '', nom_contact: '', poste: '',
+  numero: '', statut: '', rdv_pris: false, date_rdv: '',
+  commentaire: '', objection: '', next_step: ''
+}
 
 export default function Journal() {
   const [entries, setEntries] = useState([])
@@ -45,18 +49,18 @@ export default function Journal() {
   const openEdit = e => {
     setEditing(e.id)
     setForm({
-      date: e.date || '',
-      heure: e.heure || '',
-      entreprise: e.entreprise || '',
-      nom_contact: e.nom_contact || '',
-      poste: e.poste || '',
-      numero: e.numero || '',
-      statut: e.statut || '',
-      rdv_pris: e.rdv_pris || false,
-      date_rdv: e.date_rdv || '',
-      commentaire: e.commentaire || '',
-      objection: e.objection || '',
-      next_step: e.next_step || '',
+      date:         e.date ? e.date.toString().slice(0, 10) : '',
+      heure:        e.heure || '',
+      entreprise:   e.entreprise || '',
+      nom_contact:  e.nom_contact || '',
+      poste:        e.poste || '',
+      numero:       e.numero || '',
+      statut:       e.statut || '',
+      rdv_pris:     e.rdv_pris || false,
+      date_rdv:     e.date_rdv ? e.date_rdv.toString().slice(0, 10) : '',
+      commentaire:  e.commentaire || '',
+      objection:    e.objection || '',
+      next_step:    e.next_step || '',
     })
     setShowModal(true)
   }
@@ -114,7 +118,9 @@ export default function Journal() {
           {STATUTS.map(s => <option key={s}>{s}</option>)}
         </select>
         {(search || filterStatut) && (
-          <button className="btn-ghost" onClick={() => { setSearch(''); setFilterStatut(''); setPage(0) }}>✕ Réinitialiser</button>
+          <button className="btn-ghost" onClick={() => { setSearch(''); setFilterStatut(''); setPage(0) }}>
+            ✕ Réinitialiser
+          </button>
         )}
       </div>
 
@@ -125,7 +131,9 @@ export default function Journal() {
           <table className="data-table">
             <thead>
               <tr>
-                {['Date', 'Contact', 'Entreprise', 'Statut', 'RDV', 'Commentaire', 'Next Step', ''].map(h => <th key={h}>{h}</th>)}
+                {['Date', 'Contact', 'Entreprise', 'Statut', 'RDV', 'Commentaire', 'Next Step', ''].map(h => (
+                  <th key={h}>{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -142,7 +150,9 @@ export default function Journal() {
                       ? <span className="badge badge-teal">✓ {e.date_rdv ? new Date(e.date_rdv).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : 'Oui'}</span>
                       : <span style={{ color: 'var(--text-3)' }}>—</span>}
                   </td>
-                  <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-3)' }}>{e.commentaire || '—'}</td>
+                  <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-3)' }}>
+                    {e.commentaire || '—'}
+                  </td>
                   <td style={{ color: 'var(--teal)', fontWeight: 500, fontSize: '0.82rem' }}>{e.next_step || '—'}</td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
