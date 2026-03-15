@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 const STATUTS = ['Réponse', 'Messagerie', 'Pas répondu', 'Filtrage secrétaire', 'Faux numéro']
-const OBJECTIONS = ['Aucune', 'Déjà un prestataire', 'Budget insuffisant', 'Pas le bon interlocuteur', "Projet non prioritaire", "Appel d'offres en cours", 'Trop cher', 'Pas de besoin', 'Autre']
-const NEXT_STEPS = ['Rappeler J+3', 'Rappeler J+7', 'Rappeler J+14', 'Rappeler J+30', 'Envoyer profil(s)', 'Envoyer proposition', 'Planifier démo', 'RDV planifié', 'Attendre décision', 'Classer']
+const OBJECTIONS = ['Aucune', 'Déjà un prestataire', 'Budget insuffisant', 'Pas le bon interlocuteur', 'Pas de besoin', 'Autre']
+const NEXT_STEPS = ['Rappeler J+3', 'Rappeler J+7', 'Rappeler J+14', 'Rappeler J+30', 'Envoyer profil(s)', 'RDV planifié', 'Envoyer un mail']
 
 const today = () => new Date().toISOString().split('T')[0]
 const nowTime = () => new Date().toTimeString().slice(0, 5)
