@@ -195,18 +195,23 @@ export default function Journal() {
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, backdropFilter: 'blur(3px)' }}
           />
           <div style={{
-            position: 'fixed', top: 0, right: 0, bottom: 0, width: 480,
-            background: 'var(--surface)', borderLeft: '1px solid var(--border-2)',
-            zIndex: 201, overflowY: 'auto', padding: '2rem',
+            position: 'fixed', top: 0, right: 0, bottom: 0,
+            width: 'min(600px, 100vw)',
+            background: 'var(--bg-3)',
+            borderLeft: '1px solid var(--border-2)',
+            zIndex: 201, overflowY: 'auto',
+            padding: '2.5rem',
             animation: 'slideIn 0.25s ease',
-            boxShadow: '-20px 0 60px rgba(0,0,0,0.4)'
+            boxShadow: '-20px 0 60px rgba(0,0,0,0.5)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.4rem', color: 'var(--text)' }}>
-                Modifier l'appel
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--border)' }}>
+              <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.5rem', color: 'var(--text)' }}>
+                Modifier <em style={{ fontStyle: 'italic', color: 'var(--teal)' }}>l'appel</em>
               </h2>
               <button onClick={() => setShowModal(false)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--text-3)', cursor: 'pointer', fontSize: '1.2rem' }}>
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer', fontSize: '1rem', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--rose)'; e.currentTarget.style.color = 'var(--rose)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-2)' }}>
                 ✕
               </button>
             </div>
@@ -216,10 +221,12 @@ export default function Journal() {
                 <Field label="Date" field="date" type="date" />
                 <Field label="Heure" field="heure" type="time" />
               </div>
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <Field label="Nom Contact" field="nom_contact" />
                 <Field label="Entreprise" field="entreprise" />
               </div>
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <Field label="Poste" field="poste" />
                 <Field label="Numéro" field="numero" />
@@ -256,13 +263,13 @@ export default function Journal() {
 
               <div>
                 <label className="label">Commentaire</label>
-                <textarea className="input" style={{ height: 100, resize: 'vertical' }}
+                <textarea className="input" style={{ height: 110, resize: 'vertical' }}
                   value={form.commentaire || ''}
                   onChange={e => setForm({ ...form, commentaire: e.target.value })} />
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
               <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Annuler</button>
               <button className="btn-teal" style={{ flex: 2, animation: 'none' }} onClick={handleSave} disabled={saving}>
                 {saving ? 'Enregistrement...' : '💾 Sauvegarder'}
