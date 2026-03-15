@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import { supabase } from './lib/supabase'
+import Login from './pages/Login'
 import SaisieRapide from './pages/SaisieRapide'
 import Journal from './pages/Journal'
 import Prospects from './pages/Prospects'
@@ -40,8 +42,40 @@ const NAV_GROUPS = [
 ]
 
 export default function App() {
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
   const sidebarWidth = collapsed ? 60 : 232
+
+  useEffect(() => {
+    // Vérifier la session au chargement
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      setAuthLoading(false)
+    })
+    // Écouter les changements d'auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setSession(null)
+  }
+
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#111318', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#4a5568', fontSize: '0.9rem' }}>Chargement...</div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return <Login onLogin={() => {}} />
+  }
 
   return (
     <BrowserRouter>
@@ -106,15 +140,30 @@ export default function App() {
             ))}
           </div>
 
-          {/* Footer */}
-          {!collapsed && (
-            <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ background: 'rgba(45,212,191,0.07)', border: '1px solid rgba(45,212,191,0.12)', borderRadius: 10, padding: '0.75rem' }}>
-                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#2dd4bf', marginBottom: 3 }}>Supabase</div>
-                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.4 }}>Base de données connectée</div>
+          {/* Footer avec déconnexion */}
+          <div style={{ padding: collapsed ? '1rem 0.5rem' : '1.25rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            {!collapsed && (
+              <div style={{ background: 'rgba(45,212,191,0.07)', border: '1px solid rgba(45,212,191,0.12)', borderRadius: 10, padding: '0.6rem 0.75rem', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.68rem', color: '#2dd4bf', fontWeight: 600, marginBottom: 2 }}>Connecté</div>
+                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.25)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.user.email}</div>
               </div>
-            </div>
-          )}
+            )}
+            <button onClick={handleLogout}
+              title={collapsed ? 'Déconnexion' : undefined}
+              style={{
+                width: '100%', padding: collapsed ? '0.6rem 0' : '0.55rem 0.75rem',
+                background: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 8, color: 'rgba(255,255,255,0.3)', cursor: 'pointer',
+                fontSize: '0.82rem', fontWeight: 500, transition: 'all 0.15s',
+                display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start',
+                gap: '0.5rem'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(224,108,117,0.1)'; e.currentTarget.style.borderColor = 'rgba(224,108,117,0.3)'; e.currentTarget.style.color = '#e06c75' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.3)' }}>
+              <span>🚪</span>
+              {!collapsed && 'Déconnexion'}
+            </button>
+          </div>
         </nav>
 
         {/* Main */}
